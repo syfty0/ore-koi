@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>オレ恋</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --primary: #ff4d6a;
+      --primary-soft: #ffe2ea;
+      --accent: #ffb400;
+      --text-main: #222;
+      --text-sub: #777;
+      --card-bg: #ffffff;
+      --border-soft: #eee;
+      --chat-mine: #dcf8c6;
+      --chat-theirs: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    header.app-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      position: relative;
+      background: #fff;
+      z-index: 10;
+    }
+
+    header.app-header .back-button {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      font-size: 20px;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    header.app-header .back-button.hidden {
+      display: none;
+    }
+
+    .app-header.hidden-on-start {
+      display: none;
+    }
+
+    main.app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 16px;
+      overflow-y: auto;
+      background: #fff;
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Start screen */
+
+    .start-screen {
+      padding: 0 0 96px;
+      background: radial-gradient(circle at top, #ffe6ee, #fdfdfd);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .start-hero {
+      position: relative;
+      width: 100%;
+      height: 150px;
+      overflow: hidden;
+    }
+
+    .start-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .start-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.5)
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .start-logo {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 0.25em;
+      text-indent: 0.25em;
+      color: #fff;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    }
+
+    .start-body {
+      flex: 1;
+      padding: 20px 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .start-note {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+      margin: 0;
+    }
+
+    .start-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .start-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .start-section-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .start-feature-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .start-feature-list li {
+      margin-bottom: 6px;
+      padding-left: 0.9em;
+      position: relative;
+    }
+
+    .start-feature-list li::before {
+      content: "・";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .pricing-table-wrapper {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .pricing-table th,
+    .pricing-table td {
+      border: 1px solid var(--border-soft);
+      padding: 6px 8px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .pricing-table th {
+      background: #fff5f7;
+      font-weight: 700;
+    }
+
+    .pricing-table td {
+      background: #ffffff;
+    }
+
+    .pricing-free {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Start fixed footer button */
+
+    .start-fixed-footer {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 8px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+      display: flex;
+      justify-content: center;
+      z-index: 20;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .start-fixed-footer.hidden {
+      display: none;
+    }
+
+    .start-footer-button {
+      width: 100%;
+      max-width: 440px;
+      padding: 12px;
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(255, 77, 106, 0.4);
+    }
+
+    .start-footer-button:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 8px rgba(255, 77, 106, 0.3);
+    }
+
+    /* Swipe screen */
+
+    .swipe-screen {
+      padding-bottom: 72px;
+    }
+
+    .swipe-info {
+      margin-bottom: 12px;
+      padding: 4px 4px 8px;
+    }
+
+    .swipe-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .swipe-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .card-area {
+      margin-top: 12px;
+      height: calc(100% - 110px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: visible;
+    }
+
+    .profile-card {
+      width: 100%;
+      max-width: 360px;
+      height: 70vh;
+      max-height: 520px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+      padding: 10px 10px 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      touch-action: pan-y;
+      user-select: none;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .profile-card-img-wrapper {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      flex: 1;
+      background: #ddd;
+    }
+
+    .profile-card-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-thumbs {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .thumb-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .thumb-dot.active {
+      background: #fff;
+      width: 16px;
+    }
+
+    .profile-info {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .profile-meta {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .profile-bio {
+      font-size: 13px;
+      color: #444;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .swipe-label {
+      position: absolute;
+      top: 16px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .swipe-label.like {
+      left: 12px;
+      border: 2px solid #4cd964;
+      color: #4cd964;
+      background: rgba(76, 217, 100, 0.1);
+    }
+
+    .swipe-label.nope {
+      right: 12px;
+      border: 2px solid #ff3b30;
+      color: #ff3b30;
+      background: rgba(255, 59, 48, 0.07);
+    }
+
+    .swipe-label.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .swipe-buttons {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding-bottom: 4px;
+    }
+
+    .circle-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      border: none;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+    }
+
+    .circle-btn:active {
+      transform: translateY(1px) scale(0.97);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .circle-btn.dislike {
+      color: #ff3b30;
+    }
+
+    .circle-btn.like {
+      color: #4cd964;
+    }
+
+    .circle-btn.superlike {
+      background: var(--primary-soft);
+      color: var(--accent);
+      font-size: 22px;
+    }
+
+    /* Match overlay */
+
+    .match-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 50;
+    }
+
+    .match-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .match-dialog {
+      width: 80%;
+      max-width: 320px;
+      background: radial-gradient(circle at top, #ffe6ee, #ffffff);
+      border-radius: 28px;
+      padding: 20px 18px 18px;
+      text-align: center;
+      position: relative;
+      animation: popIn 0.5s ease;
+    }
+
+    .match-dialog-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+
+    .match-dialog-sub {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    .match-avatars {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .match-avatar-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 3px solid #fff;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+      background: #ddd;
+    }
+
+    .match-avatar-user {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: #333;
+    }
+
+    .match-avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .match-dialog-close {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.8) translateY(10px);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Chat list screen */
+
+    .chat-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .chat-empty {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--border-soft);
+      cursor: pointer;
+    }
+
+    .chat-item-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-right: 10px;
+      background: #ddd;
+    }
+
+    .chat-item-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .chat-item-body {
+      flex: 1;
+      min-width: 0;
+      padding-right: 4px;
+    }
+
+    .chat-item-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .chat-item-last {
+      font-size: 12px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-item-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-left: 8px;
+      min-width: 40px;
+    }
+
+    .chat-item-time {
+      font-size: 11px;
+      color: var(--text-sub);
+      white-space: nowrap;
+    }
+
+    .chat-item-unread {
+      min-width: 18px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Individual chat */
+
+    .chat-detail-main {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding-bottom: 72px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 4px 4px;
+    }
+
+    .bubble-row {
+      display: flex;
+      margin: 4px 0;
+    }
+
+    .bubble-row.me {
+      justify-content: flex-end;
+    }
+
+    .bubble-row.them {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 8px 10px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .bubble.me {
+      background: var(--chat-mine);
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble.them {
+      background: var(--chat-theirs);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble-time {
+      font-size: 10px;
+      color: var(--text-sub);
+      margin-top: 2px;
+      text-align: right;
+    }
+
+    .qr-wrapper {
+      display: inline-block;
+      margin-top: 4px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      background: #fff;
+    }
+
+    .qr-wrapper img {
+      width: 140px;
+      height: 140px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .chat-input-area {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 6px 8px;
+      border-top: 1px solid var(--border-soft);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .chat-send-btn {
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      padding: 8px 12px;
+      cursor: pointer;
+      min-width: 52px;
+    }
+
+    /* Footer nav */
+
+    .footer-nav {
+      height: 56px;
+      border-top: 1px solid var(--border-soft);
+      display: flex;
+      background: #fff;
+    }
+
+    .footer-nav.hidden {
+      display: none;
+    }
+
+    .footer-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    .footer-tab-icon {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .footer-tab.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Utility */
+
+    .hidden {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .profile-card {
+        height: 480px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <button class="back-button hidden" id="back-button" aria-label="戻る">←</button>
+      <span id="header-title">オレ恋</span>
+    </header>
+
+    <main class="app-main">
+      <!-- スタート画面 -->
+      <section class="screen start-screen active" id="screen-start">
+        <div class="start-hero">
+          <!-- ここに背景画像を配置：images/start-bg.jpg を差し替え -->
+          <img src="images/start-bg.jpg" alt="イメージ画像" />
+          <div class="start-hero-overlay">
+            <div class="start-logo">オレ恋</div>
+          </div>
+        </div>
+
+        <!-- 下側のコンテンツ -->
+        <div class="start-body">
+          <p class="start-note">俺しかいないマッチングアプリ</p>
+
+          <!-- 特徴 -->
+          <section class="start-section">
+            <div class="start-section-title">特徴</div>
+            <ul class="start-feature-list">
+              <li>俺マッチング率100％！</li>
+              <li>真剣な方だけが登録しています！(俺は真剣なので)</li>
+              <li>優良会員率100％！(俺は優良なので)</li>
+            </ul>
+          </section>
+
+          <!-- 料金 -->
+          <section class="start-section">
+            <div class="start-section-title">料金</div>
+            <div class="start-section-sub">
+              メッセージ開封・メッセージ送信など、すべての機能が完全無料で利用できます。
+            </div>
+            <div class="pricing-table-wrapper">
+              <table class="pricing-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>男性</th>
+                    <th>女性</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>メッセージ開封</td>
+                    <td class="pricing-free">無料</td>
+                    <td class="pricing-free">無料</td>
+                  </tr>
+                  <tr>
+                    <td>メッセージ送信</td>
+                    <td class="pricing-free">無料</td>
+                    <td class="pricing-free">無料</td>
+                  </tr>
+                  <tr>
+                    <td>マッチング</td>
+                    <td class="pricing-free">無料</td>
+                    <td class="pricing-free">無料</td>
+                  </tr>
+                  <tr>
+                    <td>スーパーライク</td>
+                    <td class="pricing-free">無料</td>
+                    <td class="pricing-free">無料</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <div class="start-section-sub">
+            ■ 許認可<br>
+            インターネット異性紹介事業届出 未受理<br>
+            適正事業者の証である「IMS認証」 未取得
+          </div>
+        </div>
+      </section>
+
+      <!-- スワイプ画面 -->
+      <section class="screen swipe-screen" id="screen-swipe">
+        <div class="swipe-info">
+          <div class="swipe-title">スワイプしてマッチ</div>
+        </div>
+
+        <div class="card-area">
+          <div class="profile-card" id="profile-card">
+            <div class="swipe-label like" id="label-like">いいかも！</div>
+            <div class="swipe-label nope" id="label-nope">微妙…</div>
+
+            <div class="profile-card-img-wrapper">
+              <img id="card-main-image" src="" alt="プロフィール画像" />
+              <div class="image-thumbs">
+                <div class="thumb-dot active" data-img-index="0"></div>
+                <div class="thumb-dot" data-img-index="1"></div>
+              </div>
+            </div>
+            <div class="profile-info">
+              <div class="profile-name" id="card-name"></div>
+              <div class="profile-meta" id="card-meta"></div>
+              <div class="profile-bio" id="card-bio"></div>
+            </div>
+          </div>
+
+          <div class="swipe-buttons">
+            <button class="circle-btn dislike" id="btn-dislike" aria-label="微妙">
+              ✕
+            </button>
+            <button class="circle-btn superlike" id="btn-superlike" aria-label="スーパーライク">
+              ★
+            </button>
+            <button class="circle-btn like" id="btn-like" aria-label="いいかも">
+              ❤
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- チャット一覧画面 -->
+      <section class="screen" id="screen-chat">
+        <ul class="chat-list" id="chat-list"></ul>
+        <div class="chat-empty" id="chat-empty">
+          まだマッチがありません。<br />スワイプ画面で「いいかも！」してみましょう。
+        </div>
+      </section>
+
+      <!-- 個別チャット画面 -->
+      <section class="screen" id="screen-chat-detail">
+        <div class="chat-detail-main">
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-input-area">
+            <input
+              type="text"
+              id="chat-input"
+              class="chat-input"
+              placeholder="メッセージを入力"
+            />
+            <button class="chat-send-btn" id="chat-send-btn">送信</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- スタート画面専用 固定フッターボタン -->
+    <div class="start-fixed-footer" id="start-fixed-footer">
+      <button class="start-footer-button" id="start-footer-button">いますぐ始める</button>
+    </div>
+
+    <!-- フッターナビ -->
+    <nav class="footer-nav hidden" id="footer-nav">
+      <div class="footer-tab active" data-target="swipe" id="tab-swipe">
+        <div class="footer-tab-icon">🔥</div>
+        <div>スワイプ</div>
+      </div>
+      <div class="footer-tab" data-target="chat" id="tab-chat">
+        <div class="footer-tab-icon">💬</div>
+        <div>チャット</div>
+      </div>
+    </nav>
+
+    <!-- マッチングオーバーレイ -->
+    <div class="match-overlay" id="match-overlay">
+      <div class="match-dialog">
+        <div class="match-dialog-title">マッチングしました！</div>
+        <div class="match-dialog-sub">
+          マッチした相手にあいさつしてみましょう。<br />
+        </div>
+        <div class="match-avatars">
+          <div class="match-avatar-circle">
+            <img src="images/my-icon.png" alt="相手アイコン" />
+          </div>
+          <div class="match-avatar-circle match-avatar-user" aria-label="自分アイコン">
+            👀
+          </div>
+        </div>
+        <div class="match-dialog-close">タップで閉じる</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --------------- データ定義 ---------------
+
+    const cards = [
+      {
+        id: 1,
+        name: "俺",
+        meta: "23歳・会社員 / 福井県",
+        bio: "音楽とカフェ巡りが好きです。休日はゆるく散歩したり映画を観たりしてます。",
+        images: ["images/card1-1.jpg", "images/card1-2.jpg"],
+      },
+      {
+        id: 2,
+        name: "俺",
+        meta: "23歳・会社員 / インドア寄り",
+        bio: "ゲームとアニメが多めですが、たまに外に出てご飯を食べに行くのも好きです。",
+        images: ["images/card2-1.jpg", "images/card2-2.jpg"],
+      },
+      {
+        id: 3,
+        name: "俺",
+        meta: "23歳・Web系 / エンジニア",
+        bio: "MBTI 02 アプリ壊れた",
+        images: ["images/card3-1.jpg", "images/card3-2.jpg"],
+      },
+      {
+        id: 4,
+        name: "俺",
+        meta: "23歳・カフェ好き",
+        bio: "静かな場所でゆっくり話すのが好きです。写真を撮るのも好きなので、一緒に撮れたら嬉しいです。",
+        images: ["images/card4-1.jpg", "images/card4-2.jpg"],
+      },
+      {
+        id: 5,
+        name: "俺",
+        meta: "23歳・非フリーランス",
+        bio: "マイペースな性格です。合いそうだなと思ったら、気軽に話しかけてもらえたら嬉しいです。",
+        images: ["images/card5-1.jpg", "images/card5-2.jpg"],
+      },
+    ];
+
+    const chats = []; // { id, name, lastMessage, messages, createdAt, unreadCount, userMessageCount }
+
+    let currentCardIndex = 0;
+    let currentImageIndex = 0;
+    let currentChatId = null;
+
+    // スワイプ用状態
+    let startX = 0;
+    let currentX = 0;
+    let dragging = false;
+
+    // --------------- 画像プリロード ---------------
+
+    function preloadImages() {
+      const urls = new Set();
+
+      // 固定画像
+      urls.add("images/start-bg.jpg");
+      urls.add("images/my-icon.png");
+      urls.add("images/line-qr.png");
+
+      // カード用画像
+      cards.forEach((card) => {
+        card.images.forEach((src) => urls.add(src));
+      });
+
+      urls.forEach((url) => {
+        const img = new Image();
+        img.src = url;
+      });
+    }
+
+    // --------------- メッセージテンプレ・共通関数 ---------------
+
+    const matchMessageTemplates = [
+      { messages: ["マッチングありがとうございます！"] },
+      { messages: ["マッチングありがとうございます！", "趣味は何ですか？"] },
+      { messages: ["マッチングありがとうございます！こちらこそよろしくお願いします！"] },
+    ];
+
+    function formatTime(value) {
+      const d = value ? new Date(value) : new Date();
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      return `${hh}:${mm}`;
+    }
+
+    function addIncomingMessage(chat, text, options = {}) {
+      const now = new Date();
+      const msg = {
+        from: "them",
+        type: options.type || "text",
+        text: text,
+        time: now.toISOString(),
+      };
+      chat.messages.push(msg);
+
+      if (msg.type !== "qr") {
+        chat.lastMessage = text;
+      }
+
+      const isActiveChat =
+        screenChatDetail.classList.contains("active") && currentChatId === chat.id;
+
+      if (!isActiveChat) {
+        chat.unreadCount = (chat.unreadCount || 0) + 1;
+      }
+    }
+
+    function addIncomingQrMessage(chat) {
+      const now = new Date();
+      const msg = {
+        from: "them",
+        type: "qr",
+        text: "",
+        time: now.toISOString(),
+      };
+      chat.messages.push(msg);
+
+      const isActiveChat =
+        screenChatDetail.classList.contains("active") && currentChatId === chat.id;
+
+      if (!isActiveChat) {
+        chat.unreadCount = (chat.unreadCount || 0) + 1;
+      }
+    }
+
+    function addInitialMatchMessages(chat) {
+      const template =
+        matchMessageTemplates[Math.floor(Math.random() * matchMessageTemplates.length)];
+      template.messages.forEach((text) => {
+        addIncomingMessage(chat, text);
+      });
+    }
+
+    // --------------- DOM取得 ---------------
+
+    const appHeader = document.querySelector(".app-header");
+
+    const screenStart = document.getElementById("screen-start");
+    const screenSwipe = document.getElementById("screen-swipe");
+    const screenChat = document.getElementById("screen-chat");
+    const screenChatDetail = document.getElementById("screen-chat-detail");
+
+    const headerTitle = document.getElementById("header-title");
+    const backButton = document.getElementById("back-button");
+    const footerNav = document.getElementById("footer-nav");
+    const tabSwipe = document.getElementById("tab-swipe");
+    const tabChat = document.getElementById("tab-chat");
+
+    const startFixedFooter = document.getElementById("start-fixed-footer");
+    const startFooterButton = document.getElementById("start-footer-button");
+
+    const profileCard = document.getElementById("profile-card");
+    const cardMainImage = document.getElementById("card-main-image");
+    const thumbDots = document.querySelectorAll(".thumb-dot");
+    const cardName = document.getElementById("card-name");
+    const cardMeta = document.getElementById("card-meta");
+    const cardBio = document.getElementById("card-bio");
+    const labelLike = document.getElementById("label-like");
+    const labelNope = document.getElementById("label-nope");
+
+    const btnLike = document.getElementById("btn-like");
+    const btnDislike = document.getElementById("btn-dislike");
+    const btnSuperlike = document.getElementById("btn-superlike");
+
+    const matchOverlay = document.getElementById("match-overlay");
+
+    const chatList = document.getElementById("chat-list");
+    const chatEmpty = document.getElementById("chat-empty");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const chatSendBtn = document.getElementById("chat-send-btn");
+
+    // --------------- 画面切り替え ---------------
+
+    function showScreen(name) {
+      screenStart.classList.remove("active");
+      screenSwipe.classList.remove("active");
+      screenChat.classList.remove("active");
+      screenChatDetail.classList.remove("active");
+      backButton.classList.add("hidden");
+      footerNav.classList.remove("hidden");
+      tabSwipe.classList.remove("active");
+      tabChat.classList.remove("active");
+
+      if (name === "start") {
+        screenStart.classList.add("active");
+        appHeader.classList.add("hidden-on-start");
+        footerNav.classList.add("hidden");
+        startFixedFooter.classList.remove("hidden");
+      } else if (name === "swipe") {
+        screenSwipe.classList.add("active");
+        appHeader.classList.remove("hidden-on-start");
+        headerTitle.textContent = "スワイプ";
+        tabSwipe.classList.add("active");
+        startFixedFooter.classList.add("hidden");
+      } else if (name === "chat") {
+        screenChat.classList.add("active");
+        appHeader.classList.remove("hidden-on-start");
+        headerTitle.textContent = "チャット";
+        tabChat.classList.add("active");
+        startFixedFooter.classList.add("hidden");
+      } else if (name === "chat-detail") {
+        screenChatDetail.classList.add("active");
+        appHeader.classList.remove("hidden-on-start");
+        headerTitle.textContent = "トーク";
+        backButton.classList.remove("hidden");
+        startFixedFooter.classList.add("hidden");
+      }
+    }
+
+    // --------------- カード表示 ---------------
+
+    function loadCurrentCard() {
+      const card = cards[currentCardIndex];
+      if (!card) return;
+      currentImageIndex = 0;
+      cardMainImage.src = card.images[0];
+      cardName.textContent = card.name;
+      cardMeta.textContent = card.meta;
+      cardBio.textContent = card.bio;
+      thumbDots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === currentImageIndex);
+      });
+      resetCardTransform();
+    }
+
+    function nextCard() {
+      currentCardIndex = (currentCardIndex + 1) % cards.length;
+      loadCurrentCard();
+    }
+
+    function setCardImage(index) {
+      const card = cards[currentCardIndex];
+      if (!card || !card.images[index]) return;
+      currentImageIndex = index;
+      cardMainImage.src = card.images[index];
+      thumbDots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === currentImageIndex);
+      });
+    }
+
+    function resetCardTransform() {
+      profileCard.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+      profileCard.style.transform = "translateX(0) rotate(0deg)";
+      profileCard.style.opacity = "1";
+      labelLike.classList.remove("visible");
+      labelNope.classList.remove("visible");
+      setTimeout(() => {
+        profileCard.style.transition = "";
+      }, 250);
+    }
+
+    // --------------- スワイプ処理 ---------------
+
+    function onDragStart(clientX) {
+      dragging = true;
+      startX = clientX;
+      currentX = clientX;
+      profileCard.style.transition = "none";
+    }
+
+    function onDragMove(clientX) {
+      if (!dragging) return;
+      currentX = clientX;
+      const deltaX = currentX - startX;
+      const rotate = deltaX / 20;
+      const opacity = Math.max(0.7, 1 - Math.abs(deltaX) / 600);
+      profileCard.style.transform = `translateX(${deltaX}px) rotate(${rotate}deg)`;
+      profileCard.style.opacity = opacity;
+
+      const threshold = 40;
+      if (deltaX > threshold) {
+        labelLike.classList.add("visible");
+        labelNope.classList.remove("visible");
+      } else if (deltaX < -threshold) {
+        labelNope.classList.add("visible");
+        labelLike.classList.remove("visible");
+      } else {
+        labelLike.classList.remove("visible");
+        labelNope.classList.remove("visible");
+      }
+    }
+
+    function onDragEnd() {
+      if (!dragging) return;
+      dragging = false;
+      const deltaX = currentX - startX;
+      const threshold = 80;
+
+      if (deltaX > threshold) {
+        animateOffScreen("right");
+        handleChoice("like");
+      } else if (deltaX < -threshold) {
+        animateOffScreen("left");
+        handleChoice("nope");
+      } else {
+        resetCardTransform();
+      }
+    }
+
+    function animateOffScreen(direction) {
+      profileCard.style.transition = "transform 0.25s ease, opacity 0.25s ease";
+      const x = direction === "right" ? 400 : -400;
+      const rotate = direction === "right" ? 25 : -25;
+      profileCard.style.transform = `translateX(${x}px) rotate(${rotate}deg)`;
+      profileCard.style.opacity = "0";
+      setTimeout(() => {
+        labelLike.classList.remove("visible");
+        labelNope.classList.remove("visible");
+        nextCard();
+      }, 220);
+    }
+
+    function handleChoice(type) {
+      if (type === "like" || type === "superlike") {
+        createMatchFromCurrentCard(type === "superlike");
+        showMatchDialog();
+      }
+      if (type === "nope") {
+        labelNope.classList.remove("visible");
+        labelLike.classList.remove("visible");
+      }
+    }
+
+    // --------------- マッチ & チャット ---------------
+
+    function createMatchFromCurrentCard(isSuperlike) {
+      const card = cards[currentCardIndex];
+      const id = Date.now().toString() + Math.random().toString().slice(2);
+
+      const chat = {
+        id,
+        name: card.name,
+        lastMessage: "",
+        createdAt: new Date(),
+        messages: [],
+        unreadCount: 0,
+        userMessageCount: 0,
+      };
+
+      addInitialMatchMessages(chat);
+
+      chats.unshift(chat);
+      renderChatList();
+    }
+
+    function renderChatList() {
+      chatList.innerHTML = "";
+      if (chats.length === 0) {
+        chatEmpty.style.display = "block";
+        return;
+      }
+      chatEmpty.style.display = "none";
+
+      chats.forEach((chat) => {
+        const li = document.createElement("li");
+        li.className = "chat-item";
+        li.dataset.chatId = chat.id;
+
+        const avatar = document.createElement("div");
+        avatar.className = "chat-item-avatar";
+        const img = document.createElement("img");
+        img.src = "images/my-icon.png";
+        img.alt = chat.name;
+        avatar.appendChild(img);
+
+        const body = document.createElement("div");
+        body.className = "chat-item-body";
+        const nameEl = document.createElement("div");
+        nameEl.className = "chat-item-name";
+        nameEl.textContent = chat.name;
+        const last = document.createElement("div");
+        last.className = "chat-item-last";
+        last.textContent = chat.lastMessage || "";
+
+        body.appendChild(nameEl);
+        body.appendChild(last);
+
+        const meta = document.createElement("div");
+        meta.className = "chat-item-meta";
+
+        const time = document.createElement("div");
+        time.className = "chat-item-time";
+        const lastMsg = chat.messages[chat.messages.length - 1];
+        if (lastMsg) {
+          time.textContent = formatTime(lastMsg.time);
+        } else {
+          time.textContent = formatTime(chat.createdAt);
+        }
+
+        const unread = document.createElement("div");
+        unread.className = "chat-item-unread";
+        if (chat.unreadCount > 0) {
+          unread.textContent = chat.unreadCount;
+        } else {
+          unread.classList.add("hidden");
+        }
+
+        meta.appendChild(time);
+        meta.appendChild(unread);
+
+        li.appendChild(avatar);
+        li.appendChild(body);
+        li.appendChild(meta);
+
+        li.addEventListener("click", () => {
+          openChat(chat.id);
+        });
+
+        chatList.appendChild(li);
+      });
+    }
+
+    function findChatById(id) {
+      return chats.find((c) => c.id === id) || null;
+    }
+
+    function openChat(id) {
+      const chat = findChatById(id);
+      if (!chat) return;
+      currentChatId = id;
+      showScreen("chat-detail");
+      headerTitle.textContent = chat.name;
+      renderChatMessages(chat);
+
+      chat.unreadCount = 0;
+      renderChatList();
+
+      setTimeout(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 0);
+    }
+
+    function renderChatMessages(chat) {
+      chatMessages.innerHTML = "";
+      chat.messages.forEach((msg) => {
+        const row = document.createElement("div");
+        row.className = "bubble-row " + (msg.from === "me" ? "me" : "them");
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + (msg.from === "me" ? "me" : "them");
+
+        if (msg.type === "qr") {
+          if (msg.text) {
+            const text = document.createElement("div");
+            text.textContent = msg.text;
+            bubble.appendChild(text);
+          }
+          const qr = document.createElement("div");
+          qr.className = "qr-wrapper";
+          const img = document.createElement("img");
+          img.src = "images/line-qr.png";
+          img.alt = "LINE QRコード";
+          qr.appendChild(img);
+          bubble.appendChild(qr);
+        } else {
+          const text = document.createElement("div");
+          text.textContent = msg.text;
+          bubble.appendChild(text);
+        }
+
+        const timeEl = document.createElement("div");
+        timeEl.className = "bubble-time";
+        timeEl.textContent = formatTime(msg.time);
+        bubble.appendChild(timeEl);
+
+        row.appendChild(bubble);
+        chatMessages.appendChild(row);
+      });
+    }
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text || !currentChatId) return;
+
+      const chat = findChatById(currentChatId);
+      if (!chat) return;
+
+      const now = new Date();
+      const myMsg = {
+        from: "me",
+        type: "text",
+        text,
+        time: now.toISOString(),
+      };
+      chat.messages.push(myMsg);
+      chat.lastMessage = text;
+
+      chat.userMessageCount = (chat.userMessageCount || 0) + 1;
+      const stage = chat.userMessageCount;
+
+      chatInput.value = "";
+      renderChatMessages(chat);
+      renderChatList();
+
+      setTimeout(() => {
+        const targetChat = findChatById(chat.id);
+        if (!targetChat) return;
+
+        if (stage === 1) {
+          addIncomingMessage(targetChat, "およ！バリおもろいやん！");
+        } else {
+          addIncomingMessage(targetChat, "てかLINE交換せん？");
+          addIncomingMessage(targetChat, "ここから追加してな👇");
+          addIncomingQrMessage(targetChat);
+        }
+
+        renderChatMessages(targetChat);
+        renderChatList();
+
+        if (
+          screenChatDetail.classList.contains("active") &&
+          currentChatId === targetChat.id
+        ) {
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }, 2000);
+    }
+
+    // --------------- マッチダイアログ ---------------
+
+    function showMatchDialog() {
+      matchOverlay.classList.add("show");
+    }
+
+    function hideMatchDialog() {
+      matchOverlay.classList.remove("show");
+    }
+
+    // --------------- イベント登録 ---------------
+
+    function goToSwipe() {
+      showScreen("swipe");
+    }
+
+    function setupEvents() {
+      startFooterButton.addEventListener("click", goToSwipe);
+
+      tabSwipe.addEventListener("click", () => {
+        showScreen("swipe");
+      });
+
+      tabChat.addEventListener("click", () => {
+        showScreen("chat");
+      });
+
+      backButton.addEventListener("click", () => {
+        if (screenChatDetail.classList.contains("active")) {
+          showScreen("chat");
+        } else {
+          showScreen("swipe");
+        }
+      });
+
+      thumbDots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          const index = Number(dot.dataset.imgIndex || "0");
+          setCardImage(index);
+        });
+      });
+
+      btnLike.addEventListener("click", () => {
+        animateOffScreen("right");
+        handleChoice("like");
+      });
+
+      btnDislike.addEventListener("click", () => {
+        animateOffScreen("left");
+        handleChoice("nope");
+      });
+
+      btnSuperlike.addEventListener("click", () => {
+        animateOffScreen("right");
+        handleChoice("superlike");
+      });
+
+      profileCard.addEventListener("touchstart", (e) => {
+        if (e.touches.length > 1) return;
+        const touch = e.touches[0];
+        onDragStart(touch.clientX);
+      });
+
+      profileCard.addEventListener("touchmove", (e) => {
+        if (!dragging || e.touches.length > 1) return;
+        const touch = e.touches[0];
+        onDragMove(touch.clientX);
+      });
+
+      profileCard.addEventListener("touchend", () => {
+        onDragEnd();
+      });
+
+      profileCard.addEventListener("mousedown", (e) => {
+        onDragStart(e.clientX);
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        onDragMove(e.clientX);
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        onDragEnd();
+      });
+
+      matchOverlay.addEventListener("click", hideMatchDialog);
+
+      chatSendBtn.addEventListener("click", sendMessage);
+      chatInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+
+    // --------------- 初期化 ---------------
+
+    function init() {
+      preloadImages();
+      loadCurrentCard();
+      setupEvents();
+      showScreen("start");
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
